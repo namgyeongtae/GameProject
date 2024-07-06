@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+public class InputManager : Manager
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Init()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Clear()
     {
         
     }

@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Managers : MonoBehaviour
+public class Managers
 {
-    // Start is called before the first frame update
-    void Start()
+    private static InputManager _input = new InputManager();
+
+    public static InputManager Input;
+
+    public void Init()
     {
-        
+        _input.Init();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Clear()
     {
-        
+
     }
 }
