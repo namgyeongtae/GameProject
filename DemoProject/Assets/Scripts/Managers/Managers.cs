@@ -5,8 +5,12 @@ using UnityEngine;
 public class Managers
 {
     private static InputManager _input = new InputManager();
+    private static ResourceManager _resource = new ResourceManager();
+    private static UIManager _ui = new UIManager();
 
-    public static InputManager Input;
+    public static InputManager Input { get { return _input; } }
+    public static ResourceManager Resource { get { return _resource; } }
+    public static UIManager UI { get { return _ui; } }
 
     public void Init()
     {
