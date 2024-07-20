@@ -5,3 +5,4 @@ DemoProject/obj
 DemoProject/Temp
 DemoProject/UserSettings
 DemoProject/Assembly-CSharp.csproj
+*.sln
