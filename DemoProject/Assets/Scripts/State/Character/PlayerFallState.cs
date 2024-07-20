@@ -2,21 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerFallState : IState
+public class PlayerFallState : PlayerState
 {
-    private PlayerController _player;
-
     public PlayerFallState(PlayerController player)
+        : base(player)
     {
-        _player = player;
+        
     }
 
-    public void Enter()
+    public override void Enter()
     {
         _player.SetAnimation(this);
     }
 
-    public void Update()
+    public override void Update()
     {
         if (_player.IsGrounded())
         {
@@ -28,7 +27,7 @@ public class PlayerFallState : IState
         }
     }
 
-    public void Exit()
+    public override void Exit()
     {
 
     }

@@ -2,22 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerRunState : IState
+public class PlayerRunState : PlayerState
 {
-    private PlayerController _player;
-
     public PlayerRunState(PlayerController player)
+        : base(player)
     {
-        _player = player;
+        
     }
 
-    public void Enter()
+    public override void Enter()
     {
         Debug.Log("Run");
         _player.SetAnimation(this);
     }
 
-    public void Update()
+    public override void Update()
     {
         if (_player.Rigidbody.velocity.x == 0)
         {
@@ -32,7 +31,7 @@ public class PlayerRunState : IState
         }
     }
 
-    public void Exit()
+    public override void Exit()
     {
 
     }

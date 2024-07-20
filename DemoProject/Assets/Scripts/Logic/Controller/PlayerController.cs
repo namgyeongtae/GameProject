@@ -35,15 +35,14 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Move();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        Move();
         Jump();
-
-        Debug.DrawRay(transform.position, Vector2.down * 1.0f, Color.red);
 
         StateMachine.OnUpdate();
     }
@@ -84,7 +83,6 @@ public class PlayerController : MonoBehaviour
 
         _spriteRenderer.flipX = (moveX < 0) ? true : false;
     }
-
     public void Jump()
     {
         if (Input.GetKeyDown(KeyCode.Space))
@@ -93,6 +91,18 @@ public class PlayerController : MonoBehaviour
             _rigidbody.velocity = Vector2.zero;
             Vector2 dir = Vector2.up * _jumpForce;
             _rigidbody.AddForce(dir, ForceMode2D.Impulse);
+        }
+    }
+    public void Die()
+    {
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Trap"))
+        {
+            // Player Die!
         }
     }
 }

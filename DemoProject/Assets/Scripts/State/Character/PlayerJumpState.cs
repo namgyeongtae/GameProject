@@ -2,22 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerJumpState : IState
+public class PlayerJumpState : PlayerState
 {
-    private PlayerController _player;
-
     public PlayerJumpState(PlayerController player)
+        : base(player)
     {
-        _player = player;
+        
     }
 
-    public void Enter()
+    public override void Enter()
     {
-        Debug.Log($"Jump : {_player.Rigidbody.velocity.y}");
         _player.SetAnimation(this);
     }
 
-    public void Update()
+    public override void Update()
     {
         if (_player.Rigidbody.velocity.y < 0)
         {
@@ -25,7 +23,7 @@ public class PlayerJumpState : IState
         }
     }
 
-    public void Exit() 
+    public override void Exit() 
     {
 
     }

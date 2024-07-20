@@ -2,22 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerIdleState : IState
+public class PlayerIdleState : PlayerState
 {
-    private PlayerController _player;
-
     public PlayerIdleState(PlayerController player)
+        : base(player)
     {
-        _player = player;
+        
     }
 
-    public void Enter()
+    public override void Enter()
     {
         Debug.Log("Idle");
         _player.SetAnimation(this);
     }
 
-    public void Update()
+    public override void Update()
     {
         if (Mathf.Abs(_player.Rigidbody.velocity.x) > 0)
         {
@@ -32,7 +31,7 @@ public class PlayerIdleState : IState
         }
     }
 
-    public void Exit()
+    public override void Exit()
     {
 
     }
