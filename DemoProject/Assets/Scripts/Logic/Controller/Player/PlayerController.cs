@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Move();
-        Jump();
+        // Jump();
 
         StateMachine.OnUpdate();
     }
@@ -56,15 +56,15 @@ public class PlayerController : MonoBehaviour
                 _animator.SetFloat("velocityY", 0);
                 break;
             case PlayerRunState run:
-                _animator.SetFloat("velocityX", Mathf.Abs(_rigidbody.velocity.x));
+                _animator.SetFloat("velocityX", _rigidbody.velocity.magnitude);
                 _animator.SetFloat("velocityY", 0);
                 break;
-            case PlayerJumpState jump:
-                _animator.SetFloat("velocityY", _rigidbody.velocity.y);
-                break;
-            case PlayerFallState fall:
-                _animator.SetFloat("velocityY", _rigidbody.velocity.y);
-                break;
+            //case PlayerJumpState jump:
+            //    _animator.SetFloat("velocityY", _rigidbody.velocity.y);
+            //    break;
+            //case PlayerFallState fall:
+            //    _animator.SetFloat("velocityY", _rigidbody.velocity.y);
+            //    break;
         }
     }
     
@@ -76,9 +76,10 @@ public class PlayerController : MonoBehaviour
     public void Move()
     {
         float moveX = Input.GetAxisRaw("Horizontal") * _speed;
-        _rigidbody.velocity = new Vector2(moveX, _rigidbody.velocity.y);
+        float moveY = Input.GetAxisRaw("Vertical") * _speed;
+        _rigidbody.velocity = new Vector2(moveX, moveY);
 
-        if (moveX == 0)
+        if (moveX == 0 && moveY == 0)
             return;
 
         _spriteRenderer.flipX = (moveX < 0) ? true : false;
