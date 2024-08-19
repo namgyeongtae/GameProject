@@ -34,4 +34,11 @@ public class GameManager : MonoBehaviour
             _instance = go.GetOrAddComponent<GameManager>();
         }
     }
+
+    public void GameOver()
+    {
+        // TODO 
+        // GameOver UI È°¼ºÈ­
+
+    }
 }
