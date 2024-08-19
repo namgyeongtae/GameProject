@@ -22,6 +22,12 @@ public class MonsterIdleState : MonsterState
             _monster.StateMachine.TransitionTo(_monster.StateMachine.MonsterChaseState);
             return;
         }
+
+        if (_monster.HP <= 0)
+        {
+            _monster.StateMachine.TransitionTo(_monster.StateMachine.MonsterDieState);
+            return;
+        }
     }
 
     public override void Exit()

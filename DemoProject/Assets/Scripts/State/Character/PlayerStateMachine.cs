@@ -10,13 +10,15 @@ public class PlayerStateMachine
     public PlayerRunState PlayerRunState { get; private set; }
     public PlayerJumpState PlayerJumpState { get; private set; }
     public PlayerFallState PlayerFallState { get; private set; }
+    public PlayerKnockbackState PlayerKnockbackState { get; private set; }
 
     public PlayerStateMachine(PlayerController player)
     {
         PlayerIdleState = new PlayerIdleState(player);
         PlayerRunState = new PlayerRunState(player);
-        PlayerJumpState= new PlayerJumpState(player);
-        PlayerFallState= new PlayerFallState(player);
+        PlayerJumpState = new PlayerJumpState(player);
+        PlayerFallState = new PlayerFallState(player);
+        PlayerKnockbackState = new PlayerKnockbackState(player);
     }
 
     public void OnInit()

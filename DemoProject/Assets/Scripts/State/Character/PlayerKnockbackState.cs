@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerRunState : PlayerState
+public class PlayerKnockbackState : PlayerState
 {
-    public PlayerRunState(PlayerController player)
+    public PlayerKnockbackState(PlayerController player)
         : base(player)
     {
-        
+
     }
 
     public override void Enter()
@@ -17,18 +17,11 @@ public class PlayerRunState : PlayerState
 
     public override void Update()
     {
-        if (_player.Rigidbody.velocity.magnitude == 0)
+        if (_player.Rigidbody.velocity.magnitude <= 0.7f)
         {
-            // Debug.Log("Player : Idle");
             _player.StateMachine.TransitionTo(_player.StateMachine.PlayerIdleState);
             return;
         }
-
-        //if (_player.Rigidbody.velocity.y > 0)
-        //{
-        //    _player.StateMachine.TransitionTo(_player.StateMachine.PlayerJumpState);
-        //    return;
-        //}
     }
 
     public override void Exit()

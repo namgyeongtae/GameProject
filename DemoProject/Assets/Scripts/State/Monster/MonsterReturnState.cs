@@ -23,6 +23,17 @@ public class MonsterReturnState : MonsterState
             return;
         }
 
+        if (_monster.IsReturnToOrigin())
+        {
+            _monster.StateMachine.TransitionTo(_monster.StateMachine.MonsterIdleState);
+            return;
+        }
+
+        if (_monster.HP <= 0)
+        {
+            _monster.StateMachine.TransitionTo(_monster.StateMachine.MonsterDieState);
+            return;
+        }
     }
 
     public override void Exit()

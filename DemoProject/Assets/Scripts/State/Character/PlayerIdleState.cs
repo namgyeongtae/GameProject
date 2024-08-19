@@ -12,23 +12,24 @@ public class PlayerIdleState : PlayerState
 
     public override void Enter()
     {
-        Debug.Log("Idle");
         _player.SetAnimation(this);
     }
 
     public override void Update()
     {
-        if (Mathf.Abs(_player.Rigidbody.velocity.x) > 0)
+        Vector2 velocity = _player.Rigidbody.velocity  * 1000;
+
+        if (velocity.magnitude > 0)
         {
             _player.StateMachine.TransitionTo(_player.StateMachine.PlayerRunState);
             return;
         }
 
-        if (_player.Rigidbody.velocity.y > 0)
-        {
-            _player.StateMachine.TransitionTo(_player.StateMachine.PlayerJumpState);
-            return;
-        }
+        //if (_player.Rigidbody.velocity.y > 0)
+        //{
+        //    _player.StateMachine.TransitionTo(_player.StateMachine.PlayerJumpState);
+        //    return;
+        //}
     }
 
     public override void Exit()

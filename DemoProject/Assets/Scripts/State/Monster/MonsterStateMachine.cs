@@ -9,12 +9,14 @@ public class MonsterStateMachine
     public MonsterIdleState MonsterIdleState { get; private set; }
     public MonsterChaseState MonsterChaseState { get; private set; }
     public MonsterReturnState MonsterReturnState { get; private set; }
+    public MonsterDieState MonsterDieState { get; private set; }
 
     public MonsterStateMachine(Monster monster)
     {
         MonsterIdleState = new MonsterIdleState(monster);
         MonsterChaseState = new MonsterChaseState(monster);
         MonsterReturnState = new MonsterReturnState(monster);
+        MonsterDieState = new MonsterDieState(monster);
     }
 
     public void OnInit()

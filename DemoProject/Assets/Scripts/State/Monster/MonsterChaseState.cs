@@ -19,7 +19,16 @@ public class MonsterChaseState : MonsterState
     public override void Update()
     {
         if (_monster.Target == null)
+        {
             _monster.StateMachine.TransitionTo(_monster.StateMachine.MonsterReturnState);
+            return;
+        }
+
+        if (_monster.HP <= 0)
+        {
+            _monster.StateMachine.TransitionTo(_monster.StateMachine.MonsterDieState);
+            return;
+        }
     }
 
     public override void Exit()
