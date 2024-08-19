@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,7 +18,10 @@ public class Monster : MonoBehaviour
     private GameObject _target;
     private Vector3 _originPosition;
 
+    private float _hp;
+
     public MonsterStateMachine StateMachine { get; private set; }
+    public float HP => _hp;
     public GameObject Target => _target;
 
     private void Awake()
@@ -28,6 +32,7 @@ public class Monster : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
 
         _aiSensor = GetComponentInChildren<AISensor>();
+        _aiSensor.GetComponent<CircleCollider2D>().radius = _monsterStat.detectRange;
         BindAIEvents();
 
         _animator = GetComponentInChildren<Animator>();
@@ -40,6 +45,7 @@ public class Monster : MonoBehaviour
         StateMachine.OnInit();
 
         _originPosition = transform.position;
+        _hp = _monsterStat.hp;
 
         _navmeshAgent.updateRotation = false;
         _navmeshAgent.updateUpAxis = false;
@@ -48,6 +54,8 @@ public class Monster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        _aiSensor.OnUpdate();
+
         StateMachine.OnUpdate();
     }
 
@@ -97,9 +105,38 @@ public class Monster : MonoBehaviour
         _navmeshAgent.SetDestination(_target.transform.position);
     }
 
-    protected virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(GameObject hitSource, float damage)
     {
+        damage -= _monsterStat.defense;
 
+        _hp -= damage;
+
+        StartCoroutine(KnockBack(hitSource));
+    }
+
+    private IEnumerator KnockBack(GameObject hitSource)
+    {
+        _navmeshAgent.isStopped = true;
+
+        float knockBackForce = 2.5f;
+
+        switch (StateMachine.CurrentState)
+        {
+            case MonsterIdleState idle:
+                knockBackForce = 2.5f;
+                break;
+            case MonsterChaseState chase:
+            case MonsterReturnState returnState:
+                knockBackForce = 6.0f;
+                break;
+        }
+
+        Vector2 direction = transform.position - hitSource.transform.position;
+        _rigidbody.AddForce(direction.normalized * knockBackForce, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(5f);
+
+        _navmeshAgent.isStopped = false;
     }
 
     public void SetAnimation(IState state)
@@ -120,11 +157,38 @@ public class Monster : MonoBehaviour
 
     public void DetectTarget(GameObject target)
     {
-        _target= target;
+        if (_target != target)
+            _target= target;
     }
 
     public void MissTarget()
     {
         _target = null;
+    }
+
+    public bool IsReturnToOrigin()
+    {
+        if (Vector2.Distance(transform.position, _originPosition) < 0.1f)
+            return true;
+
+        return false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            var player = collision.GetComponent<PlayerController>();
+            player.TakeDamage(this.gameObject, _monsterStat.attack);
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            var player = collision.GetComponent<PlayerController>();
+            player.TakeDamage(this.gameObject, _monsterStat.attack);
+        }
     }
 }
