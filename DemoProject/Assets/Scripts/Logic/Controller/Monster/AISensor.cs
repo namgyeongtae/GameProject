@@ -10,21 +10,22 @@ public class AISensor : MonoBehaviour
     public Action<GameObject> OnTriggerEnterEvent;
     public Action OnTriggerExitEvent;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void DetectTarget()
     {
-        if (collision.gameObject.CompareTag(TargetTag))
+        var collider = Physics2D.OverlapCircle(transform.position, 4f, 1 << LayerMask.NameToLayer("Player"));
+
+        if (collider != null)
         {
-            Debug.Log($"OnTriggerEnter : {collision.name}");
-            OnTriggerEnterEvent?.Invoke(collision.gameObject);
+            OnTriggerEnterEvent?.Invoke(collider.gameObject);
+        }
+        else
+        {
+            OnTriggerExitEvent?.Invoke();
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    public void OnUpdate()
     {
-        if (collision.gameObject.CompareTag(TargetTag))
-        {
-            Debug.Log($"OnTriggerExit : {collision.name}");
-            OnTriggerExitEvent?.Invoke();
-        }
+        DetectTarget();
     }
 }
