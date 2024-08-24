@@ -17,7 +17,7 @@ public class PlayerRunState : PlayerState
 
     public override void Update()
     {
-        if (_player.Rigidbody.velocity.magnitude == 0)
+        if (_player.Rigidbody.velocity.magnitude <= 0.25f)
         {
             // Debug.Log("Player : Idle");
             _player.StateMachine.TransitionTo(_player.StateMachine.PlayerIdleState);

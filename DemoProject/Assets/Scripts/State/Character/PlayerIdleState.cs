@@ -17,9 +17,9 @@ public class PlayerIdleState : PlayerState
 
     public override void Update()
     {
-        Vector2 velocity = _player.Rigidbody.velocity  * 1000;
+        Vector2 velocity = _player.Rigidbody.velocity;
 
-        if (velocity.magnitude > 0)
+        if (velocity.magnitude > 0.25f)
         {
             _player.StateMachine.TransitionTo(_player.StateMachine.PlayerRunState);
             return;
