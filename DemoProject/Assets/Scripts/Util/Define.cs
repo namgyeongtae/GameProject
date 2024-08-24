@@ -7,6 +7,8 @@ public class Define
     public static float KNOCKBACK_FORCE = 5.0f;
     public static float INVINCIBLE_TIME = 1.0f;
 
+    public static int AFTER_IMAGE_POOL_COUNT = 15;
+
     public enum UIEvent
     {
         Click,
