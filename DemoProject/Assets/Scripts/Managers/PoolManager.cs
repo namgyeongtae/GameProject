@@ -37,11 +37,11 @@ public class PoolManager : Manager
         _pool.Add(original.name, pool);
     }
 
-    public Poolable Pop(GameObject original, Transform parent = null)
+    public Poolable Pop(GameObject original, Transform parent = null, int count = 5)
     {
         if (!_pool.ContainsKey(original.name))
         {
-            CreatePool(original);
+            CreatePool(original, count);
         }
 
         return _pool[original.name].Pop(parent);

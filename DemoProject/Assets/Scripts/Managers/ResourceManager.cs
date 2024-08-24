@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ResourceManager 
+public class ResourceManager
 {
     public T Load<T>(string path) where T : Object
     {
@@ -22,7 +22,7 @@ public class ResourceManager
         return Resources.Load<T>(path);
     }
 
-    public GameObject Instantiate(string path, Transform parent = null)
+    public GameObject Instantiate(string path, int poolCount = 5, Transform parent = null)
     {
         GameObject original = Load<GameObject>($"Prefabs/{path}");
         if (original == null)
@@ -32,7 +32,7 @@ public class ResourceManager
         }
 
         if (original.GetComponent<Poolable>() != null)
-            return Managers.Pool.Pop(original, parent).gameObject;
+            return Managers.Pool.Pop(original, parent, poolCount).gameObject;
 
         GameObject go = Object.Instantiate(original, parent);
         go.name = original.name;
@@ -52,5 +52,21 @@ public class ResourceManager
         }
 
         Object.Destroy(go);
+    }
+
+    public IEnumerator Destroy(GameObject go, float delay)
+    {
+        if (go == null)
+            yield break;
+
+        Poolable poolable = go.GetComponent<Poolable>();
+        if (poolable != null)
+        {
+            yield return new WaitForSeconds(delay);
+            Managers.Pool.Push(poolable);
+            yield break;
+        }
+
+        Object.Destroy(go, delay);
     }
 }
