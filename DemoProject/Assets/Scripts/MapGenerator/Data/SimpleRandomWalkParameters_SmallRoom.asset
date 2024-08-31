@@ -9,11 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e7d6bda514ece64181cd865bdfb25e4, type: 3}
-  m_Name: Stats_Player
+  m_Script: {fileID: 11500000, guid: f634f0430192e3f4fb0a6e23616f3f9f, type: 3}
+  m_Name: SimpleRandomWalkParameters_SmallRoom
   m_EditorClassIdentifier: 
-  hp: 50
-  attack: 2
-  defense: 1
-  speed: 4
-  detectRange: 0
+  iterations: 50
+  walkLength: 15
+  isStartRandomlyEachIteration: 1
