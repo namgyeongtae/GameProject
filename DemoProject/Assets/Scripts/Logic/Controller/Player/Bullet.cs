@@ -5,13 +5,11 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private PlayerController _shooter;
+    private Gun _gun;
 
     private Vector3 _direction;
     private float _lifeTime = 5f;
     private float _currentTime = 0f;
-
-    private Vector3 _startPosition;
 
     // Start is called before the first frame update
     void Start()
@@ -33,17 +31,23 @@ public class Bullet : MonoBehaviour
         Move();
     }
 
-    public void Init()
+    public void Init(Gun gun)
     {
-        _shooter = GameObject.Find("Player").GetComponent<PlayerController>();
-        var player = _shooter.transform.Find("ShootPos");
+        _gun = gun;
 
-        if (player == null)
+        var shootPos = _gun.transform.Find("ShootPos");
+
+        if (shootPos == null)
+        {
+            Debug.LogError("Shoot Pos is NULL!!");
             return;
+        }
 
-        transform.position = player.transform.position;
+        _direction = shootPos.transform.right;
 
-        _direction = player.transform.right;
+        transform.position = shootPos.position;
+        transform.right = _direction;
+
 
         if (_direction.x < 0)
             GetComponent<SpriteRenderer>().flipX = true;
@@ -67,7 +71,7 @@ public class Bullet : MonoBehaviour
     {
         var monster = collision.GetComponent<Monster>();
         if (monster != null)
-            monster.TakeDamage(this.gameObject, _shooter.PlayerStat.attack);
+            monster.TakeDamage(this.gameObject, _gun.Player.PlayerStat.attack);
 
         if (!collision.CompareTag("IgnoreTag")
             && !collision.CompareTag("Player"))
