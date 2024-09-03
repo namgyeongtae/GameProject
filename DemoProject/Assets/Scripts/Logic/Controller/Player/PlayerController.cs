@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
     private Animator _animator;
-    private SpriteRenderer _spriteRenderer;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
 
     private bool _isInvincible = false;
     private bool _isDash = false;
@@ -20,17 +20,19 @@ public class PlayerController : MonoBehaviour
 
     private float _currentHP;
     private float _currentSpeed;
-    private float _jumpForce = 10f;
 
+    // Move Input (Horizontal, Vertical)
     private float _moveX;
     private float _moveY;
 
+    // Dash After Image
     private float _afterImageDelay = 0.05f;
     private float _afterImageDelayTime;
     private bool _isAfterImage;
     private float _afterImageTime = 0.7f;
     private float _afterImageTimeLeft = 0.7f;
 
+    // Dash
     private float _dashDistance = 3f;
     private float _dashTime = 0.1f;
     private float _dashTimeLeft;
@@ -49,7 +51,6 @@ public class PlayerController : MonoBehaviour
         _boxCollider= GetComponent<BoxCollider2D>();
 
         _animator = GetComponentInChildren<Animator>();
-        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
@@ -69,12 +70,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            ShootBullet();  
-        }
-
         Move();
+        LookRotaiton();
         Dash();
         MakeAfterImage();
 
@@ -107,7 +104,7 @@ public class PlayerController : MonoBehaviour
         return Physics2D.Raycast(transform.position, Vector2.down, 2.0f, 1 << LayerMask.NameToLayer("Ground"));
     }
 
-    public void Move()
+    private void Move()
     {
         if (StateMachine.CurrentState == StateMachine.PlayerKnockbackState) 
             return;
@@ -120,30 +117,35 @@ public class PlayerController : MonoBehaviour
 
         Vector2 targetVelocity = new Vector2(_moveX, _moveY);
         _rigidbody.velocity = Vector2.Lerp(_rigidbody.velocity, targetVelocity, 0.9f); // 0.1f는 보간 속도
+    }
 
-        if (_moveX != 0 || _moveY != 0)
-        {
-            transform.rotation = (_moveX >= 0) ?
-                Quaternion.Euler(Vector3.zero) : Quaternion.Euler(new Vector3(0f, 180f, 0f));
-        }
-    }
-    public void Jump()
+    private void LookRotaiton()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            
-            _rigidbody.velocity = Vector2.zero;
-            Vector2 dir = Vector2.up * _jumpForce;
-            _rigidbody.AddForce(dir, ForceMode2D.Impulse);
-        }
+        var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        Vector2 look = position - transform.position;
+
+        transform.rotation = (look.x >= 0) ? Quaternion.Euler(Vector3.zero) : Quaternion.Euler(new Vector3(0f, 180f, 0f));
     }
-    public void Die()
+
+    //private void Jump()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+            
+    //        _rigidbody.velocity = Vector2.zero;
+    //        Vector2 dir = Vector2.up * _jumpForce;
+    //        _rigidbody.AddForce(dir, ForceMode2D.Impulse);
+    //    }
+    //}
+
+    private void Die()
     {
         // TODO 
         // GameManager로 하여금 게임오버 상태로 진입 시키기
         GameManager.Instance.GameOver();
     }
-    public void Dash()
+    private void Dash()
     {
         if (_isDash)
         {
@@ -234,12 +236,6 @@ public class PlayerController : MonoBehaviour
             afterImageRenderer.DOFade(0.2f, 0.3f);
             StartCoroutine(Managers.Resource.Destroy(afterimage, 0.3f));
         }
-    }
-
-    private void ShootBullet()
-    {
-        var bullet = Managers.Resource.Instantiate("Bullet");
-        bullet.GetComponent<Bullet>()?.Init();
     }
 
     private void KnockBack(GameObject hitSource, float force)

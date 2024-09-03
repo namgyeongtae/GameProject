@@ -96,6 +96,11 @@ public class Monster : MonoBehaviour
         _navmeshAgent.isStopped = false;
         _navmeshAgent.speed = _monsterStat.speed;
         _navmeshAgent.SetDestination(_originPosition);
+
+        if (_originPosition.x >= transform.position.x)
+            transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+        else
+            transform.rotation = Quaternion.identity;
     }
 
     private void Chase()
@@ -103,6 +108,11 @@ public class Monster : MonoBehaviour
         _navmeshAgent.isStopped = false;
         _navmeshAgent.speed = _monsterStat.speed;
         _navmeshAgent.SetDestination(_target.transform.position);
+
+        if (_target.transform.position.x >= transform.position.x)
+            transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
+        else
+            transform.rotation = Quaternion.identity;
     }
 
     public virtual void TakeDamage(GameObject hitSource, float damage)
