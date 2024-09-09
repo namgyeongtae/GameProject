@@ -26,11 +26,11 @@ public class PlayerController : MonoBehaviour
     private float _moveY;
 
     // Dash After Image
-    private float _afterImageDelay = 0.05f;
+    private float _afterImageDelay = 0.02f;
     private float _afterImageDelayTime;
     private bool _isAfterImage;
-    private float _afterImageTime = 0.7f;
-    private float _afterImageTimeLeft = 0.7f;
+    private float _afterImageTime = 0.4f;
+    private float _afterImageTimeLeft = 0.4f;
 
     // Dash
     private float _dashDistance = 3f;
