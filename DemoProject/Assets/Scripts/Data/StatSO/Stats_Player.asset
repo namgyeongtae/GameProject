@@ -15,5 +15,5 @@ MonoBehaviour:
   hp: 50
   attack: 2
   defense: 1
-  speed: 4
+  speed: 7
   detectRange: 0
