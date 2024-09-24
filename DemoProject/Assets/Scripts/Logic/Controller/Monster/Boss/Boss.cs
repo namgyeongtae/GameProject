@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 
 public class Boss : MonoBehaviour
 {
@@ -14,9 +15,13 @@ public class Boss : MonoBehaviour
     private BTRunner _BTRunner;
 
     [SerializeField] private Stat _bossStat;
+    [SerializeField] private GameObject _unitRoot;
 
     private int _currentPhase = 1;
     private bool _isExecutePhase = true;
+
+    private float _currentHp;
+    private float _maxHp;
 
     private INode _rootNode;
 
@@ -50,6 +55,8 @@ public class Boss : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _maxHp = _currentHp = _bossStat.hp;
+
         _enemyPlayerTr = GameObject.FindGameObjectWithTag("Player").transform;
 
         _navMeshAgent.updateRotation = false;
@@ -97,10 +104,12 @@ public class Boss : MonoBehaviour
     {
         return new SelectorNode(new List<INode>()
         {
-            new ActionNode(ChasePlayer),
-            new ActionNode(RandomDash),
-            new ActionNode(CreateSwords),
-            new ActionNode(ThrowSword)
+            new SequenceNode("Phase 2", new List<INode>()
+            {
+                new ActionNode(ChasePlayer),
+                new ActionNode(RandomDash)
+            }),
+            new ActionNode(CreateSwords)
         });
     }
 
@@ -112,8 +121,31 @@ public class Boss : MonoBehaviour
             new ActionNode(RandomDash),
             new ActionNode(SummonMonster),
             new ActionNode(GroundAttack),
-            new ActionNode(TeleportToPlayer)
+            new ActionNode(TeleportToPlayer) 
         });
+    }
+
+    private void CheckPhase()
+    {
+        float hpRatio = _currentHp / _maxHp;
+
+        if (hpRatio > 0.7 && _currentPhase != 1)
+        {
+            _currentPhase = 1;
+            BuildBT();
+        }
+        else if (hpRatio <= 0.7 && hpRatio > 0.4 && _currentPhase != 2)
+        {
+            Debug.Log("Enter Phase 2");
+            _currentPhase = 2;
+            BuildBT();
+        }
+        else if (hpRatio <= 0.4 && _currentPhase != 3) 
+        {
+            Debug.Log("Enter Phase 3");
+            _currentPhase = 3;
+            BuildBT();
+        }
     }
 
     #region Phase1 Pattern
@@ -139,13 +171,6 @@ public class Boss : MonoBehaviour
 
     private INode.NodeState RandomDash()
     {
-        //if (Vector2.Distance(_enemyPlayerTr.position, transform.position) <= MIN_DASH_RANGE ||
-        //    Vector2.Distance(_enemyPlayerTr.position, transform.position) >= MAX_DASH_RANGE)
-        //{
-        //    Debug.Log("Not Dash Dist");
-        //    return INode.NodeState.Failure;
-        //}
-
         if (Dash())
         {
             Debug.Log("Dash!");
@@ -164,14 +189,16 @@ public class Boss : MonoBehaviour
 
     private INode.NodeState CreateSwords()
     {
-        return INode.NodeState.Failure;
-    }
+        if (GetComponentInChildren<SwordHandler>() != null)
+            return INode.NodeState.Failure;
 
-    private INode.NodeState ThrowSword()
-    {
-        return INode.NodeState.Failure;
-    }
+        var swordHandler = Managers.Resource.Instantiate("Monster/Boss/SwordHandler", 0, this.transform);
 
+        if (swordHandler == null)
+            return INode.NodeState.Failure;
+
+        return INode.NodeState.Success;
+    }
     #endregion
 
     #region Phase3 Pattern
@@ -193,9 +220,13 @@ public class Boss : MonoBehaviour
 
     #endregion
 
-    private void TakeDamage(float damage)
+    public void TakeDamage(float damage)
     {
+        _currentHp -= damage;
 
+        CheckPhase();
+
+        Debug.Log($"HP : <color=red>{_currentHp}</color>");
     }
 
     private bool Dash()
@@ -247,11 +278,11 @@ public class Boss : MonoBehaviour
 
         if (dirX < 0)
         {
-            transform.rotation = Quaternion.Euler(Vector3.zero);
+            _unitRoot.transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
         else
         {
-            transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+            _unitRoot.transform.localRotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         }
     }
 
@@ -268,13 +299,13 @@ public class Boss : MonoBehaviour
             _afterImageDelayTime -= Time.deltaTime;
         else
         {
-            GameObject afterimage = Managers.Resource.Instantiate("Monster/BossAfterImage", Define.AFTER_IMAGE_POOL_COUNT);
+            GameObject afterimage = Managers.Resource.Instantiate("Monster/Boss/BossAfterImage", Define.AFTER_IMAGE_POOL_COUNT);
             SpriteRenderer[] afterImageRenderer = afterimage.GetComponentsInChildren<SpriteRenderer>();
             
             afterimage.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1);
             afterimage.transform.rotation = transform.rotation;
             
-            SpriteRenderer[] currentSprite = GetComponentsInChildren<SpriteRenderer>();
+            SpriteRenderer[] currentSprite = _unitRoot.GetComponentsInChildren<SpriteRenderer>();
             
             afterimage.transform.localScale = transform.localScale;
 

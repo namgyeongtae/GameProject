@@ -73,6 +73,10 @@ public class Bullet : MonoBehaviour
         if (monster != null)
             monster.TakeDamage(this.gameObject, _gun.Player.PlayerStat.attack);
 
+        var boss = collision.GetComponent<Boss>();
+        if (boss != null)
+            boss.TakeDamage(_gun.Player.PlayerStat.attack);
+
         if (!collision.CompareTag("IgnoreTag")
             && !collision.CompareTag("Player"))
         {
