@@ -23,7 +23,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
     [SerializeField] private bool _showRoomGizmo = false;
     [SerializeField] private bool _showCorridorGizmo;
     
-    public List<Room> Rooms = new List<Room>();
+    // public List<Room> Rooms = new List<Room>();
 
     protected override void RunProceduralGeneration()
     {
@@ -119,7 +119,7 @@ public class CorridorFirstDungeonGenerator : SimpleRandomWalkDungeonGenerator
         _roomsDictionary[roomPosition] = roomFloor;
         _roomColors.Add(UnityEngine.Random.ColorHSV());
 
-        Rooms.Add(new Room(roomPosition, roomFloor));
+        // Rooms.Add(new Room(roomPosition, roomFloor));
     }
 
     private List<List<Vector2Int>> CreateCorridors(HashSet<Vector2Int> floorPositions, HashSet<Vector2Int> potentialRoomPositions)
