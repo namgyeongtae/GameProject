@@ -6,6 +6,10 @@ using UnityEngine;
 public class Stat : ScriptableObject
 {
     public float hp, attack, defense;
-    public float speed;
+    public float attackRange;
+    public float attackSpeed;
     public float detectRange;
+    public float speed;
+    public float knockBackForce;
+    public float knockBackMultiplier = 1;
 }
