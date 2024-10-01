@@ -9,6 +9,19 @@ public class Define
 
     public static int AFTER_IMAGE_POOL_COUNT = 15;
 
+    public static int DROP_MIN = 3;
+    public static int DROP_MAX = 6;
+
+    public enum OrderLayer
+    {
+        NONE = 0,
+        FLOOR = 1,
+        WALL = 2,
+        DECO = 3,
+        ENTITY = 4
+    }
+
+
     public enum UIEvent
     {
         Click,
