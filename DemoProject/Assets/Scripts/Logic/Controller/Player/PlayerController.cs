@@ -3,22 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Entity
 {
     public PlayerStateMachine StateMachine { get; private set; }
 
-    private Rigidbody2D _rigidbody;
     private BoxCollider2D _boxCollider;
-    private Animator _animator;
     [SerializeField] private SpriteRenderer _spriteRenderer;
 
-    private bool _isInvincible = false;
     private bool _isDash = false;
 
     [SerializeField] private Stat _playerStat;
     [SerializeField] private GameObject _afterImage;
 
-    private float _currentHP;
     private float _currentSpeed;
 
     // Move Input (Horizontal, Vertical)
@@ -40,22 +36,26 @@ public class PlayerController : MonoBehaviour
     private float _dashCoolDown = 0.04f;
     private Vector2 _dashDirection= Vector2.zero;
 
+    // Effect
+    [SerializeField] private ParticleSystem _smokeDashEffect;
+    
     public Rigidbody2D Rigidbody { get { return _rigidbody; } }
     public Stat PlayerStat { get { return _playerStat; } }
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         StateMachine = new PlayerStateMachine(this);
 
-        _rigidbody = GetComponent<Rigidbody2D>();
         _boxCollider= GetComponent<BoxCollider2D>();
-
-        _animator = GetComponentInChildren<Animator>();
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         _currentHP = _playerStat.hp;
         _currentSpeed = _playerStat.speed;
 
@@ -70,10 +70,13 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!CanMove || Knockbacked)
+            return;
+
         Move();
         LookRotaiton();
         Dash();
-        MakeAfterImage();
+        // MakeAfterImage();
 
         StateMachine.OnUpdate();
     }
@@ -106,6 +109,9 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
+        if (!CanMove)
+            return;
+
         if (StateMachine.CurrentState == StateMachine.PlayerKnockbackState) 
             return;
 
@@ -128,23 +134,13 @@ public class PlayerController : MonoBehaviour
         transform.rotation = (look.x >= 0) ? Quaternion.Euler(Vector3.zero) : Quaternion.Euler(new Vector3(0f, 180f, 0f));
     }
 
-    //private void Jump()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Space))
-    //    {
-            
-    //        _rigidbody.velocity = Vector2.zero;
-    //        Vector2 dir = Vector2.up * _jumpForce;
-    //        _rigidbody.AddForce(dir, ForceMode2D.Impulse);
-    //    }
-    //}
-
     private void Die()
     {
         // TODO 
         // GameManager로 하여금 게임오버 상태로 진입 시키기
         GameManager.Instance.GameOver();
     }
+
     private void Dash()
     {
         if (_isDash)
@@ -166,35 +162,16 @@ public class PlayerController : MonoBehaviour
             {
                 if (Time.time >= (_lastDashTime + _dashCoolDown))
                 {
-                    StartDash();
-                }
-                else
-                {
-                    Debug.Log($"Time Left = {(_lastDashTime + _dashCoolDown) - Time.time}");
+                    StartCoroutine(StartDash());
                 }
             }
         }
-       
+
     }
 
-    public void TakeDamage(GameObject hitSource, float damage)
-    {
-        if (_isInvincible)
-            return;
-
-        _currentHP -= damage;
-        if (_currentHP <= 0)
-        {
-            Die();
-        }
-
-        KnockBack(hitSource, Define.KNOCKBACK_FORCE);
-    }
-
-    private void StartDash()
+    private IEnumerator StartDash()
     {
         _isDash = true;
-        _afterImageTimeLeft = 0f;
         _dashTimeLeft = _dashTime;
         _lastDashTime = Time.time;
 
@@ -202,64 +179,62 @@ public class PlayerController : MonoBehaviour
         float moveY = Input.GetAxisRaw("Vertical");
 
         if (moveX == 0 && moveY == 0)
-        {
             _dashDirection = transform.right; // 정지 상태에서는 캐릭터가 보는 방향으로 대쉬
-        }
         else
-        {
             _dashDirection = new Vector2(moveX, moveY).normalized;
-        }
+
+        _smokeDashEffect.Play();
+        _rigidbody.velocity = Vector2.zero;
+        _rigidbody.AddForce(_dashDirection.normalized * 15, ForceMode2D.Impulse);
+        yield return new WaitForSecondsRealtime(0.1f);
+        _smokeDashEffect.Stop();
     }
 
-    private void MakeAfterImage()
+    public override void TakeDamage(GameObject hitSource, Stat hitterStat)
     {
-        if (_afterImageTimeLeft >= _afterImageTime)
+        if (Invincible) return;
+
+        base.TakeDamage(hitSource, hitterStat);
+
+        if (_currentHP <= 0)
         {
-            return;
+            Invincible = true;
         }
-
-        _afterImageTimeLeft += Time.deltaTime;
-
-        if (_afterImageDelayTime > 0)
-            _afterImageDelayTime -= Time.deltaTime;
         else
         {
-            GameObject afterimage = Managers.Resource.Instantiate("Character/PlayerAfterImage", Define.AFTER_IMAGE_POOL_COUNT);
-            SpriteRenderer afterImageRenderer = afterimage.GetComponentInChildren<SpriteRenderer>();
-            afterimage.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z + 1);
-            afterimage.transform.rotation = transform.rotation;
-            Sprite currentSprite = GetComponentInChildren<SpriteRenderer>().sprite;
-            afterimage.transform.localScale = transform.localScale;
-            afterImageRenderer.sprite = currentSprite;
-            _afterImageDelayTime = _afterImageDelay;
-
-            afterImageRenderer.DOFade(0.2f, 0.3f);
-            StartCoroutine(Managers.Resource.Destroy(afterimage, 0.3f));
+            StartCoroutine(Invincibility());
         }
     }
 
-    private void KnockBack(GameObject hitSource, float force)
+    /// <summary>
+    /// 피격 시 무적상태를 활성화 하고 캐릭터 Sprite에 Whilte Flickering 연출효과
+    /// </summary>
+    /// <returns>두 정수의 합</returns>
+    /// <exception cref="ArgumentOutOfRangeException">a 또는 b가 허용 범위를 초과할 때 발생합니다.</exception>
+    private IEnumerator Invincibility()
     {
-        // 피격 시 Move 함수를 무력화할 필요가 있음
-        StateMachine.TransitionTo(StateMachine.PlayerKnockbackState);
+        Invincible = true;
 
-        // 플레이어 넉백
-        Vector2 direction = transform.position - hitSource.transform.position;
+        yield return new WaitForSecondsRealtime(.3f);
+        int ticks = 10;
+        int alpha;
+        float time = .2f;
 
-        float minDistance = 0.1f;
-
-        if (direction.magnitude < minDistance)
+        while (ticks > 0)
         {
-            direction = transform.right;
+            if (ticks % 2 == 0)
+            {
+                alpha = 0;
+                if (time > .06f) time -= .03f;
+            }
+            else alpha = 1;
+
+            foreach (SpriteRenderer sprite in _spritesInGFX) sprite.color = new Color(1, 1, 1, alpha);
+            
+            yield return new WaitForSecondsRealtime(time);
+            ticks--;
         }
 
-        _rigidbody.velocity = Vector2.zero;
-        _rigidbody.AddForce(direction.normalized * force, ForceMode2D.Impulse);
-
-        // alpha 조정
-        _isInvincible = true;
-        _spriteRenderer.DOFade(0, 0.5f)
-                       .SetLoops(6, LoopType.Yoyo)
-                       .OnComplete(() => _isInvincible = false);
+        Invincible = false;
     }
 }
