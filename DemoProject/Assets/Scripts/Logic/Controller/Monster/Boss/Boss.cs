@@ -93,7 +93,7 @@ public class Boss : MonoBehaviour
 
     INode Phase1Tree()
     {
-        return new SequenceNode("Phase 1", new List<INode>()
+        return new SequenceNode(new List<INode>()
         {
             new ActionNode(ChasePlayer),
             new ActionNode(RandomDash)
@@ -104,7 +104,7 @@ public class Boss : MonoBehaviour
     {
         return new SelectorNode(new List<INode>()
         {
-            new SequenceNode("Phase 2", new List<INode>()
+            new SequenceNode(new List<INode>()
             {
                 new ActionNode(ChasePlayer),
                 new ActionNode(RandomDash)
@@ -330,7 +330,7 @@ public class Boss : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             var player = collision.GetComponent<PlayerController>();
-            player.TakeDamage(this.gameObject, _bossStat.attack);
+            player.TakeDamage(this.gameObject, _bossStat);
         }
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class BossSword : MonoBehaviour
 {
+    [SerializeField] Stat _stat;
+
     public void AttackDash(GameObject target)
     {
         Vector2 targetDir = target.transform.position - this.transform.position;
@@ -31,7 +33,7 @@ public class BossSword : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<PlayerController>().TakeDamage(this.gameObject, 1.0f);
+            collision.GetComponent<PlayerController>().TakeDamage(this.gameObject, _stat);
         }
     }
 }
