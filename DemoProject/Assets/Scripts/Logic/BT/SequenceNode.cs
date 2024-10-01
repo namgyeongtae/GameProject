@@ -5,15 +5,12 @@ using UnityEngine;
 
 public sealed class SequenceNode : INode
 {
-    private string _name;
-
     private List<INode> _childs;
 
     private Func<bool> _condition;
 
-    public SequenceNode(string name, List<INode> childs, Func<bool> condition = null)
+    public SequenceNode(List<INode> childs, Func<bool> condition = null)
     {
-        _name = name;
         _childs = childs;
         _condition = condition;
     }
