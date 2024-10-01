@@ -189,7 +189,7 @@ public class Monster : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             var player = collision.GetComponent<PlayerController>();
-            player.TakeDamage(this.gameObject, _monsterStat.attack);
+            player.TakeDamage(this.gameObject, _monsterStat);
         }
     }
 
@@ -198,7 +198,7 @@ public class Monster : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             var player = collision.GetComponent<PlayerController>();
-            player.TakeDamage(this.gameObject, _monsterStat.attack);
+            player.TakeDamage(this.gameObject, _monsterStat);
         }
     }
 }
