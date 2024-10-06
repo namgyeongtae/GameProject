@@ -49,7 +49,7 @@ public class Enemy : Entity
 
         Spawn();
 
-        // _maxHP = _currentHP = _stat.hp;
+        _maxHP = _currentHP = _stat.hp;
 
         if (IsArmed) Armed();
     }

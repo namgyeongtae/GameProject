@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 5748975385062873558}
   - component: {fileID: -2063774577583927408}
   - component: {fileID: 2998250092841710360}
-  - component: {fileID: -6397751958609537886}
+  - component: {fileID: 2252127452717146028}
   m_Layer: 12
   m_Name: CoinGolden
   m_TagString: Untagged
@@ -288,38 +288,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!58 &-6397751958609537886
-CircleCollider2D:
+--- !u!114 &2252127452717146028
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5748975385062873559}
   m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.175
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5a0d1d6d058f154fb2bc06d712e4489, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spitMinMax: {x: 3, y: 7}
+  _afkTime: 1
+  _pickUp: {fileID: 0}
+  _frequency: 1.5
+  _amplitude: 0.075
+  _offset: 0
+  GFX: {fileID: 7617138312538000752}
+  _spitDown: 0
+  _circleCollider: {fileID: 5748975385062873558}
+  _typeValue: 1
