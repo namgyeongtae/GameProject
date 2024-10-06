@@ -17,6 +17,14 @@ public static class Extension
         UIBase.BindEvent(go, action, type);
     }
 
+    public static void LookAtTarget(this Transform tr, Transform target)
+    {
+        float angle = Utils.AngleBetweenTwoPoints(tr.position, target.position);
+
+        Debug.Log($"Angle : {angle}");
+        tr.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+    }
+
     public static bool IsValid(this GameObject go)
     {
         return go != null && go.activeSelf;
