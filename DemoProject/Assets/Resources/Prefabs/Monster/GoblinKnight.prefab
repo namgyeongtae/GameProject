@@ -730,7 +730,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4751562405954407397
 Transform:
   m_ObjectHideFlags: 0
@@ -7490,7 +7490,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.25, y: 1}
+  m_Size: {x: 1.25, y: 1.33}
   m_EdgeRadius: 0
 --- !u!50 &1383541766619609192
 Rigidbody2D:
@@ -7531,10 +7531,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2131835560990146b5d9f2beb3c96bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Owner: {fileID: 0}
+  _weaponType: 0
   _attackSpeed: 2
   GFX: {fileID: 2927685257501150386}
   _pivotPoint: {fileID: 2959202241702849321}
+  Owner: {fileID: 0}
 --- !u!1 &8459295314704640521
 GameObject:
   m_ObjectHideFlags: 0
