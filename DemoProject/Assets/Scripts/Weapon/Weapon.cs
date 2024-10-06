@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Define;
 
 public class Weapon : MonoBehaviour
 {
@@ -12,13 +13,17 @@ public class Weapon : MonoBehaviour
 
     protected BoxCollider2D _coreCollider;
 
-    public Entity Owner;
     protected bool _isAttacking;
+
+    [SerializeField] protected WeaponType _weaponType;
 
     [SerializeField] protected float _attackSpeed;
 
     [SerializeField] protected SpriteRenderer GFX;
     [SerializeField] protected Transform _pivotPoint;
+    
+    public Entity Owner;
+    public WeaponType WeaponType => _weaponType;
 
     private void Awake()
     {

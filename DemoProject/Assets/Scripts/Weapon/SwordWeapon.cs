@@ -26,14 +26,7 @@ public class SwordWeapon : Weapon
     // Update is called once per frame
     void Update()
     {
-        if (_isHolstered || !Owner.CanMove) return;
-
-        //_pivotAngle = _pivotPoint.rotation.eulerAngles.z - (_recoverAngle * Alternate());
-
-        //if (_recoverAngle > 30) _recoverAngle -= 2.5f * _attackSpeed;
-
-        //_desiredRotation = new Vector3(0f, 0f, _targetAngle + _recoverAngle * Alternate());
-        //_pivotPoint.rotation = Quaternion.Lerp(_pivotPoint.rotation, Quaternion.Euler(_desiredRotation), (_smoothness + _attackSpeed) * Time.deltaTime);
+        
     }
 
     public override void Attack()
