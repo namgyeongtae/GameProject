@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using static INode;
 
-public class GoblinKnight : Enemy
+public class GoblinArcher : Enemy
 {
     private BTRunner _BTRunner;
 
@@ -17,8 +16,6 @@ public class GoblinKnight : Enemy
         base.Start();
 
         _BTRunner = new BTRunner(SettingBT());
-
-        _waitAttackTime = 1 / _stat.attackSpeed;
     }
 
     // Update is called once per frame
@@ -52,16 +49,15 @@ public class GoblinKnight : Enemy
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogError("There is no Player!!");
+            Debug.LogError("There is no Player!!"); 
+            _waitAttackTime = _waitInterval / _stat.attackSpeed;
             return NodeState.Failure;
         }
 
         if (Vector2.Distance(transform.position, player.transform.position) <= _stat.detectRange)
         {
-            Debug.Log("Success Detecting");
             _enemyTarget = player.transform;
 
-            if (!IsArmed) Armed();
             return NodeState.Success;
         }
 
@@ -70,13 +66,12 @@ public class GoblinKnight : Enemy
 
         _enemyTarget = null;
 
-        Debug.Log("Detect");
         return NodeState.Failure;
     }
 
     private NodeState ChaseTarget()
     {
-        if (_enemyTarget != null )
+        if (_enemyTarget != null)
         {
             if (Vector2.Distance(_enemyTarget.position, transform.position) > _stat.attackRange)
             {
@@ -101,6 +96,8 @@ public class GoblinKnight : Enemy
                 _navmeshAgent.speed = 0f;
             }
 
+            _animator.SetBool("IsMove", false);
+
             return NodeState.Success;
         }
 
@@ -121,10 +118,6 @@ public class GoblinKnight : Enemy
         }
         else
         {
-            // 공격 실시
-            _navmeshAgent.enabled = false;
-
-            Debug.Log($"Distance : {Vector2.Distance(transform.position, _enemyTarget.position)}");
             _animator.SetTrigger("IsAttack");
             _animator.SetBool("IsMove", false);
             _weapon.Attack();
@@ -132,6 +125,6 @@ public class GoblinKnight : Enemy
             _waitAttackTime = 0;
         }
 
-        return NodeState.Success; 
+        return NodeState.Success;
     }
 }

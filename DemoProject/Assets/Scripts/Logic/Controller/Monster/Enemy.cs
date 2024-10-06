@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using static INode;
 
@@ -19,7 +18,11 @@ public class Enemy : Entity
     protected Vector3 _wanderPoint;
     protected bool _spawned;
 
+    protected Transform _enemyTarget;
+
     protected bool _isAttacking;
+
+    public Transform EnemyTarget => _enemyTarget;
 
     protected override void Start()
     {
@@ -46,6 +49,8 @@ public class Enemy : Entity
 
         Spawn();
 
+        // _maxHP = _currentHP = _stat.hp;
+
         if (IsArmed) Armed();
     }
 
@@ -66,6 +71,7 @@ public class Enemy : Entity
 
                 _target = _wanderPoint;
 
+                _navmeshAgent.enabled = true;
                 _navmeshAgent.speed = 1f;
                 _navmeshAgent.isStopped = false;
                 _navmeshAgent.SetDestination(_target);
@@ -94,7 +100,7 @@ public class Enemy : Entity
     {
         if (!_spawned) return;
 
-        if (!IsArmed) Armed();
+        if (!IsArmed && _weapon.WeaponType == Define.WeaponType.Sword) Armed();
 
         base.TakeDamage(hitSource, hitterStat);
 
