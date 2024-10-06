@@ -4942,7 +4942,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -178.8, y: 1.1, z: -2.1}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8445942836181801473}
@@ -5036,6 +5036,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _stat: {fileID: 11400000, guid: cf69cf56034625644afb8e85436d3b46, type: 2}
   GFX: {fileID: 1140140420644183095}
+  _handL: {fileID: 0}
+  _handR: {fileID: 0}
+  _back: {fileID: 0}
+  _weaponCenter: {fileID: 0}
+  _offHand: {fileID: 0}
+  _weapon: {fileID: 0}
+  Knockbacked: 0
+  CanMove: 1
+  IsArmed: 0
+  Invincible: 0
+  IsFlipped: 0
   _spriteRenderer: {fileID: 7336342159977765784}
   _playerStat: {fileID: 11400000, guid: cf69cf56034625644afb8e85436d3b46, type: 2}
   _afterImage: {fileID: 9091328626408651823, guid: b1f34672d65352c4ab0ea3c5359d6c58, type: 3}
