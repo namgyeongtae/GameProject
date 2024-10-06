@@ -45,6 +45,8 @@ public class Entity : MonoBehaviour
     protected Shader _hitEffectShader;
     protected NavMeshAgent _navmeshAgent;
 
+    public BoxCollider2D CoreCollider => _coreCollder;
+
     protected virtual void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
@@ -116,7 +118,6 @@ public class Entity : MonoBehaviour
         float startTime = Time.realtimeSinceStartup;
         while (Time.realtimeSinceStartup < startTime + 0.5f)
         {
-            Debug.Log(_rigidbody.velocity);
             yield return null;
         }
 
@@ -156,6 +157,9 @@ public class Entity : MonoBehaviour
 
     public void Armed()
     {
+        if (_weapon.WeaponType != Define.WeaponType.Sword)
+            return;
+
         IsArmed = !IsArmed;
 
         _weapon.Holster();

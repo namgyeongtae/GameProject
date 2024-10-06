@@ -69,12 +69,12 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        var monster = collision.GetComponent<Mob>();
+        var monster = collision.GetComponent<Enemy>();
         if (monster != null)
-            monster.TakeDamage(this.gameObject, _gun.Player.PlayerStat.attack);
+            monster.TakeDamage(this.gameObject, _gun.Player.PlayerStat);
 
         var boss = collision.GetComponent<Boss>();
-        if (boss != null)
+        if (boss != null)   
             boss.TakeDamage(_gun.Player.PlayerStat.attack);
 
         if (!collision.CompareTag("IgnoreTag")
