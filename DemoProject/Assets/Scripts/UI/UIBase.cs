@@ -56,6 +56,7 @@ public abstract class UIBase : MonoBehaviour
     protected Text GetText(int idx) { return Get<Text>(idx); }
     protected UIButton GetButton(int idx) { return Get<UIButton>(idx); }
     protected Image GetImage(int idx) { return Get<Image>(idx); }
+    protected Slider GetSlider(int idx) { return Get<Slider>(idx); }
 
     public static void BindEvent(GameObject obj, Action<PointerEventData> action = null, UIEvent type = UIEvent.Click)
     {
