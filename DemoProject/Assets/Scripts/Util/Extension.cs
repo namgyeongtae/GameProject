@@ -21,7 +21,6 @@ public static class Extension
     {
         float angle = Utils.AngleBetweenTwoPoints(tr.position, target.position);
 
-        Debug.Log($"Angle : {angle}");
         tr.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
     }
 
