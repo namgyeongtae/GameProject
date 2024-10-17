@@ -329,7 +329,7 @@ public class Boss : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            var player = collision.GetComponent<PlayerController>();
+            var player = collision.GetComponent<Player>();
             player.TakeDamage(this.gameObject, _bossStat);
         }
     }

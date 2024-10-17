@@ -33,7 +33,7 @@ public class BossSword : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<PlayerController>().TakeDamage(this.gameObject, _stat);
+            collision.GetComponent<Player>().TakeDamage(this.gameObject, _stat);
         }
     }
 }
