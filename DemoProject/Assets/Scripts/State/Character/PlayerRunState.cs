@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerRunState : PlayerState
 {
-    public PlayerRunState(PlayerController player)
+    public PlayerRunState(Player player)
         : base(player)
     {
         

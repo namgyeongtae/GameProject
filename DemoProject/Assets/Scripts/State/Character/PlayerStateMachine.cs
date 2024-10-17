@@ -12,7 +12,7 @@ public class PlayerStateMachine
     public PlayerFallState PlayerFallState { get; private set; }
     public PlayerKnockbackState PlayerKnockbackState { get; private set; }
 
-    public PlayerStateMachine(PlayerController player)
+    public PlayerStateMachine(Player player)
     {
         PlayerIdleState = new PlayerIdleState(player);
         PlayerRunState = new PlayerRunState(player);

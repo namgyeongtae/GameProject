@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class PlayerController : Entity
+public class Player : Entity, IMovable, IDashable, IDamageable
 {
     public PlayerStateMachine StateMachine { get; private set; }
 
@@ -12,8 +12,7 @@ public class PlayerController : Entity
 
     private bool _isDash = false;
 
-    [SerializeField] private Stat _playerStat;
-    [SerializeField] private GameObject _afterImage;
+    // [SerializeField] private GameObject _afterImage;
 
     private float _currentSpeed;
 
@@ -40,7 +39,7 @@ public class PlayerController : Entity
     [SerializeField] private ParticleSystem _smokeDashEffect;
     
     public Rigidbody2D Rigidbody { get { return _rigidbody; } }
-    public Stat PlayerStat { get { return _playerStat; } }
+    public Stat PlayerStat { get { return _stat; } }
 
     protected override void Awake()
     {
@@ -56,8 +55,8 @@ public class PlayerController : Entity
     {
         base.Start();
 
-        _currentHP = _playerStat.hp;
-        _currentSpeed = _playerStat.speed;
+        _currentHP = _stat.hp;
+        _currentSpeed = _stat.speed;
 
         StateMachine.OnInit();
     }
@@ -74,7 +73,7 @@ public class PlayerController : Entity
             return;
 
         Move();
-        LookRotaiton();
+        LookRotation();
         Dash();
         // MakeAfterImage();
 
@@ -93,21 +92,10 @@ public class PlayerController : Entity
                 _animator.SetFloat("velocityX", new Vector2(_moveX, _moveY).magnitude);
                 _animator.SetFloat("velocityY", 0);
                 break;
-            //case PlayerJumpState jump:
-            //    _animator.SetFloat("velocityY", _rigidbody.velocity.y);
-            //    break;
-            //case PlayerFallState fall:
-            //    _animator.SetFloat("velocityY", _rigidbody.velocity.y);
-            //    break;
         }
     }
-    
-    public bool IsGrounded()
-    {
-        return Physics2D.Raycast(transform.position, Vector2.down, 2.0f, 1 << LayerMask.NameToLayer("Ground"));
-    }
 
-    private void Move()
+    public override void Move()
     {
         if (!CanMove)
             return;
@@ -125,7 +113,7 @@ public class PlayerController : Entity
         _rigidbody.velocity = Vector2.Lerp(_rigidbody.velocity, targetVelocity, 0.9f); // 0.1f는 보간 속도
     }
 
-    private void LookRotaiton()
+    public override void LookRotation()
     {
         var position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -141,7 +129,7 @@ public class PlayerController : Entity
         GameManager.Instance.GameOver();
     }
 
-    private void Dash()
+    public void Dash()
     {
         if (_isDash)
         {
@@ -166,7 +154,6 @@ public class PlayerController : Entity
                 }
             }
         }
-
     }
 
     private IEnumerator StartDash()
@@ -190,11 +177,17 @@ public class PlayerController : Entity
         _smokeDashEffect.Stop();
     }
 
-    public override void TakeDamage(GameObject hitSource, Stat hitterStat)
+    public void TakeDamage(GameObject hitSource, Stat hitterStat)
     {
         if (Invincible) return;
 
-        base.TakeDamage(hitSource, hitterStat);
+        if (hitterStat.knockBackForce > 0)
+            StartCoroutine(KnockBack(hitSource, hitterStat));
+
+        _currentHP -= hitterStat.attack;
+
+        foreach (SpriteRenderer renderer in _spritesInGFX)
+            renderer.material.shader = _hitEffectShader;
 
         if (_currentHP <= 0)
         {
@@ -209,8 +202,6 @@ public class PlayerController : Entity
     /// <summary>
     /// 피격 시 무적상태를 활성화 하고 캐릭터 Sprite에 Whilte Flickering 연출효과
     /// </summary>
-    /// <returns>두 정수의 합</returns>
-    /// <exception cref="ArgumentOutOfRangeException">a 또는 b가 허용 범위를 초과할 때 발생합니다.</exception>
     private IEnumerator Invincibility()
     {
         Invincible = true;
@@ -218,14 +209,14 @@ public class PlayerController : Entity
         yield return new WaitForSecondsRealtime(.3f);
         int ticks = 10;
         int alpha;
-        float time = .2f;
+        float time = 0.05f;
 
         while (ticks > 0)
         {
             if (ticks % 2 == 0)
             {
                 alpha = 0;
-                if (time > .06f) time -= .03f;
+                if (time > 0.06f) time -= 0.03f;
             }
             else alpha = 1;
 
@@ -236,5 +227,8 @@ public class PlayerController : Entity
         }
 
         Invincible = false;
+
+        CancelInvoke("BackToOriginShader");
+        Invoke("BackToOriginShader", 0.4f);
     }
 }

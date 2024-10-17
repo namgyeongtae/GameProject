@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    PlayerController _player;
+    Player _player;
 
-    public PlayerController Player => _player;
+    public Player Player => _player;
 
     private void Awake()
     {
-        _player = GetComponentInParent<PlayerController>();
+        _player = GetComponentInParent<Player>();
     }
 
     // Start is called before the first frame update

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerKnockbackState : PlayerState
 {
-    public PlayerKnockbackState(PlayerController player)
+    public PlayerKnockbackState(Player player)
         : base(player)
     {
 

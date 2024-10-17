@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDieState : PlayerState
 {
-    public PlayerDieState(PlayerController player)
+    public PlayerDieState(Player player)
         : base(player)
     {
 

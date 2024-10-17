@@ -55,9 +55,9 @@ public class Projectile : MonoBehaviour
     {
         if (collision.TryGetComponent(out Entity entity))
         {
-            if (entity is PlayerController)
+            if (entity is Player)
             {
-                entity.GetComponent<PlayerController>().TakeDamage(this.gameObject, ParentWeapon.Owner.Stat);
+                entity.GetComponent<Player>().TakeDamage(this.gameObject, ParentWeapon.Owner.Stat);
                 // Managers.Resource.Destroy(this.gameObject);
             }
             else if (entity is Enemy) entity.GetComponent<Enemy>().TakeDamage(this.gameObject, ParentWeapon.Owner.Stat);

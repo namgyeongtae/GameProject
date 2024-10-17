@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PlayerState : IState
 {
-    protected PlayerController _player;
+    protected Player _player;
 
-    public PlayerState(PlayerController player)
+    public PlayerState(Player player)
     {
         _player = player;
     }

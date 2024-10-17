@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerJumpState : PlayerState
 {
-    public PlayerJumpState(PlayerController player)
+    public PlayerJumpState(Player player)
         : base(player)
     {
         
