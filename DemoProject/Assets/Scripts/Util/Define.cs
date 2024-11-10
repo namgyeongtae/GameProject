@@ -12,6 +12,9 @@ public class Define
     public static int DROP_MIN = 3;
     public static int DROP_MAX = 6;
 
+    public static int XP_MIN = 2;
+    public static int XP_MAX = 5;
+
     public enum WeaponType
     {
         Sword,

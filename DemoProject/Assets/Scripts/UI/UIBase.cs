@@ -52,6 +52,8 @@ public abstract class UIBase : MonoBehaviour
         return objects[idx] as T;
     }
 
+    protected virtual void BindUI() { }
+
     protected GameObject GetObject(int idx) { return Get<GameObject>(idx); }
     protected Text GetText(int idx) { return Get<Text>(idx); }
     protected UIButton GetButton(int idx) { return Get<UIButton>(idx); }
