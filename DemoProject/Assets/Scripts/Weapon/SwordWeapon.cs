@@ -65,8 +65,8 @@ public class SwordWeapon : Weapon
         {
             if (Owner != entity)
             {
-                if (entity is Player) entity.GetComponent<Player>().TakeDamage(this.gameObject, Owner.Stat);
-                else if (entity is Enemy) entity.GetComponent<Enemy>().TakeDamage(this.gameObject, Owner.Stat);
+                if (entity is Player) entity.GetComponent<Player>().TakeDamage(Owner.DamageTaken);
+                else if (entity is Enemy) entity.GetComponent<Enemy>().TakeDamage(Owner.DamageTaken);
             }
         }
     }

@@ -57,10 +57,12 @@ public class Projectile : MonoBehaviour
         {
             if (entity is Player)
             {
-                entity.GetComponent<Player>().TakeDamage(this.gameObject, ParentWeapon.Owner.Stat);
-                // Managers.Resource.Destroy(this.gameObject);
+                entity.GetComponent<Player>().TakeDamage(ParentWeapon.Owner.DamageTaken);
             }
-            else if (entity is Enemy) entity.GetComponent<Enemy>().TakeDamage(this.gameObject, ParentWeapon.Owner.Stat);
+            else if (entity is Enemy)
+            {
+                entity.GetComponent<Enemy>().TakeDamage(ParentWeapon.Owner.DamageTaken);
+            }
         }
     }
 }
