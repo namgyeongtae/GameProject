@@ -28,7 +28,7 @@ public class Collectable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _target = GameObject.FindGameObjectWithTag("Player").transform;
+        _target = Managers.Character.Player.transform;
         _rigidbody = GetComponent<Rigidbody2D>();
         _posOffset = GFX.localPosition;
         _offset = Random.Range(-0.2f, 0.2f);
@@ -52,12 +52,7 @@ public class Collectable : MonoBehaviour
         if (_afkTime > 0) _afkTime -= Time.fixedDeltaTime;
         else
         {
-            // 범위 내 플레이어에게 자석처럼 이끌리기 
-            if (Vector2.Distance(transform.position, _target.position) < 1.5f)
-                transform.position = Vector3.Lerp(transform.position, _target.position, 10 * Time.fixedDeltaTime);
-
-            if (Vector2.Distance(transform.position, _target.position) < 0.1f)
-                Managers.Resource.Destroy(this.gameObject);
+            AutoCollect();
         }
     }
 
@@ -76,6 +71,35 @@ public class Collectable : MonoBehaviour
 
         float spitForce = Random.Range(_spitMinMax.x, _spitMinMax.y);
         _rigidbody.AddForce(spitDirection * spitForce, ForceMode2D.Impulse);
+    }
+
+    private void AutoCollect()
+    {
+        // 범위 내 플레이어에게 자석처럼 이끌리기 
+        if (Vector2.Distance(transform.position, _target.position) < 1.5f)
+            transform.position = Vector3.Lerp(transform.position, _target.position, 10 * Time.fixedDeltaTime);
+
+        if (Vector2.Distance(transform.position, _target.position) < 0.1f)
+        {
+            UpdatePlayerCurrency();
+            Managers.Resource.Destroy(this.gameObject);
+        }
+    }
+
+    private void UpdatePlayerCurrency()
+    {
+        switch(_typeValue)
+        {
+            case CollectableType.CoinGold:
+                PlayerCurrency.Instance.AddGold(1);
+                break;
+            case CollectableType.CoinSilver:
+                PlayerCurrency.Instance.AddSilver(1);
+                break;
+            case CollectableType.Diamond:
+                PlayerCurrency.Instance.AddDiamonds(1);
+                break;
+        }
     }
 
     private void Activate()
