@@ -4923,7 +4923,7 @@ GameObject:
   - component: {fileID: 7469301498994036548}
   - component: {fileID: 1794669295507982547}
   - component: {fileID: 2148609148784338802}
-  - component: {fileID: 3864327357300855926}
+  - component: {fileID: 190372795218716742}
   - component: {fileID: 8493578748363830112}
   m_Layer: 8
   m_Name: Player
@@ -5022,7 +5022,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.2, y: 0.32}
   m_EdgeRadius: 0
---- !u!114 &3864327357300855926
+--- !u!114 &190372795218716742
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5031,11 +5031,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5435436200424291227}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3911858ad1b24984eba4ffa2ca6de5d3, type: 3}
+  m_Script: {fileID: 11500000, guid: f6f896ae17c63234f9b4995fa5c0de1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stat: {fileID: 11400000, guid: cf69cf56034625644afb8e85436d3b46, type: 2}
   GFX: {fileID: 1140140420644183095}
+  _stat: {fileID: 11400000, guid: cf69cf56034625644afb8e85436d3b46, type: 2}
   _handL: {fileID: 0}
   _handR: {fileID: 0}
   _back: {fileID: 0}
@@ -5048,9 +5048,7 @@ MonoBehaviour:
   Invincible: 0
   IsFlipped: 0
   _spriteRenderer: {fileID: 7336342159977765784}
-  _playerStat: {fileID: 11400000, guid: cf69cf56034625644afb8e85436d3b46, type: 2}
-  _afterImage: {fileID: 9091328626408651823, guid: b1f34672d65352c4ab0ea3c5359d6c58, type: 3}
-  _smokeDashEffect: {fileID: 8970277239971677624}
+  _smokeDashEffect: {fileID: 0}
 --- !u!114 &8493578748363830112
 MonoBehaviour:
   m_ObjectHideFlags: 0
