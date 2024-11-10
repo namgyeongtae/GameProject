@@ -5,12 +5,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Entity : MonoBehaviour
+public class Entity : MonoBehaviour, IMovable
 {
-    [SerializeField] protected Stat _stat;
     [SerializeField] protected GameObject GFX;
-
-    public Stat Stat => _stat;
+    [SerializeField] protected Stat _stat;
 
     [Header("Arm Manager")]
     [SerializeField] protected Transform _handL;
@@ -43,22 +41,19 @@ public class Entity : MonoBehaviour
     protected BoxCollider2D _coreCollder;
     protected Shader _originShader;
     protected Shader _hitEffectShader;
-    protected NavMeshAgent _navmeshAgent;
+
+    protected DamageTaken _damageTaken;
 
     public BoxCollider2D CoreCollider => _coreCollder;
+    public float CurrentHP { get { return _currentHP; } set { _currentHP = value; } }
+    public Stat Stat => _stat;
+    public DamageTaken DamageTaken => _damageTaken;
 
     protected virtual void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _coreCollder = GetComponent<BoxCollider2D>();
-        _navmeshAgent = GetComponent<NavMeshAgent>();
-
-        if (_navmeshAgent != null )
-        {
-            _navmeshAgent.updateRotation = false;
-            _navmeshAgent.updateUpAxis = false;
-        }
     }
 
     // Start is called before the first frame update
@@ -67,6 +62,8 @@ public class Entity : MonoBehaviour
         _spritesInGFX = GFX.GetComponentsInChildren<SpriteRenderer>().ToList();
         _hitEffectShader = Shader.Find("GUI/Text Shader");
         _originShader = _spritesInGFX.FirstOrDefault()?.material.shader;
+
+        _damageTaken = new DamageTaken(_stat.attack, _stat.knockBackForce, this.gameObject);
     }
 
     // Update is called once per frame
@@ -81,38 +78,18 @@ public class Entity : MonoBehaviour
         if (Knockbacked || !CanMove) return;
     }
 
-    public virtual void TakeDamage(GameObject hitSource, Stat hitterStat)
-    {
-        if (Invincible) return;
+    public virtual void Move() { }
 
-        if (hitterStat.knockBackForce > 0)
-            StartCoroutine(KnockBack(hitSource, hitterStat));
+    public virtual void LookRotation() { }
 
-        _currentHP -= hitterStat.attack;
-
-        foreach (SpriteRenderer renderer in _spritesInGFX)
-            renderer.material.shader = _hitEffectShader;
-
-        if (_currentHP <= 0)
-        {
-            // Die
-            Destroy(this.gameObject, 0.3f);
-        }
-        else
-        {
-            CancelInvoke("BackToOriginShader");
-            Invoke("BackToOriginShader", 0.4f);
-        }
-    }
-
-    protected virtual IEnumerator KnockBack(GameObject hitSource, Stat hitterStat)
+    protected virtual IEnumerator KnockBack(DamageTaken damageTaken)
     {
         Knockbacked = true;
 
-        Vector2 direction = transform.position - hitSource.transform.position;
+        Vector2 direction = transform.position - damageTaken.Source.transform.position;
 
         _rigidbody.velocity = Vector2.zero;
-        _rigidbody.AddForce(direction.normalized * hitterStat.knockBackForce * _stat.knockBackMultiplier, ForceMode2D.Impulse);
+        _rigidbody.AddForce(direction.normalized * damageTaken.KnockBackForce * _stat.knockBackMultiplier, ForceMode2D.Impulse);
 
         // 넉백 효과 유지 시간
         float startTime = Time.realtimeSinceStartup;

@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using System.Security.Cryptography;
 
-public class Player : Entity, IMovable, IDashable, IDamageable
+public class Player : Entity, IDashable, IDamageable
 {
     public PlayerStateMachine StateMachine { get; private set; }
 
     private BoxCollider2D _boxCollider;
     [SerializeField] private SpriteRenderer _spriteRenderer;
-
+    
     private bool _isDash = false;
 
     // [SerializeField] private GameObject _afterImage;
@@ -39,7 +40,6 @@ public class Player : Entity, IMovable, IDashable, IDamageable
     [SerializeField] private ParticleSystem _smokeDashEffect;
     
     public Rigidbody2D Rigidbody { get { return _rigidbody; } }
-    public Stat PlayerStat { get { return _stat; } }
 
     protected override void Awake()
     {
@@ -55,10 +55,22 @@ public class Player : Entity, IMovable, IDashable, IDamageable
     {
         base.Start();
 
-        _currentHP = _stat.hp;
-        _currentSpeed = _stat.speed;
-
         StateMachine.OnInit();
+    }
+
+    public void Init()
+    {
+        // Init Stat
+        var levelData = Managers.Data.XP.XP_Dict[Managers.Character.UserData.Level];
+
+        _currentHP = Managers.Character.UserData.Character.HP;
+        _currentSpeed = Managers.Character.UserData.Character.Speed;
+
+        // Init UI
+        var playerUI = Managers.UI.GetUI<UIPlayer>();
+        playerUI.SetHPFull(levelData.hp);
+        playerUI.UpdateLvl(levelData.level);
+        playerUI.UpdateXP(Managers.Character.UserData.Exp, levelData.exp_required);
     }
 
     private void FixedUpdate()
@@ -177,14 +189,16 @@ public class Player : Entity, IMovable, IDashable, IDamageable
         _smokeDashEffect.Stop();
     }
 
-    public void TakeDamage(GameObject hitSource, Stat hitterStat)
+    public void TakeDamage(DamageTaken damageTaken)
     {
         if (Invincible) return;
 
-        if (hitterStat.knockBackForce > 0)
-            StartCoroutine(KnockBack(hitSource, hitterStat));
+        if (damageTaken.KnockBackForce > 0)
+            StartCoroutine(KnockBack(damageTaken));
 
-        _currentHP -= hitterStat.attack;
+        _currentHP -= damageTaken.DamageAmount;
+
+        Managers.UI.GetUI<UIPlayer>().TakeDamage(damageTaken.DamageAmount);
 
         foreach (SpriteRenderer renderer in _spritesInGFX)
             renderer.material.shader = _hitEffectShader;

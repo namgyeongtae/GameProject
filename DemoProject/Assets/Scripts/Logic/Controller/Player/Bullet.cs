@@ -11,10 +11,14 @@ public class Bullet : MonoBehaviour
     private float _lifeTime = 5f;
     private float _currentTime = 0f;
 
+    private DamageTaken _damageTaken;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        _damageTaken = new DamageTaken(Managers.Character.UserData.Character.Attack,
+                                       Managers.Character.UserData.Character.KnockbackForce,
+                                       _gun.Player.gameObject);
     }
 
     // Update is called once per frame
@@ -59,6 +63,7 @@ public class Bullet : MonoBehaviour
     private void Move()
     {
         transform.position += _direction.normalized * 0.05f;
+        // Debug.Log($"{transform.position} -> {GetComponent<BoxCollider2D>().bounds.center}");
     }
 
     private void Die()
@@ -71,11 +76,14 @@ public class Bullet : MonoBehaviour
     {
         var monster = collision.GetComponent<Enemy>();
         if (monster != null)
-            monster.TakeDamage(this.gameObject, _gun.Player.PlayerStat);
+        {
+            Debug.Log("Monster TakeDamage");
+            monster.TakeDamage(_damageTaken);
+        }
 
         var boss = collision.GetComponent<Boss>();
-        if (boss != null)   
-            boss.TakeDamage(_gun.Player.PlayerStat.attack);
+        if (boss != null)
+            boss.TakeDamage(_damageTaken);
 
         if (!collision.CompareTag("IgnoreTag")
             && !collision.CompareTag("Player"))
