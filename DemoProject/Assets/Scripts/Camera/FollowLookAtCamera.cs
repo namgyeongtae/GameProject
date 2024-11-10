@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FollowLookAtCamera : MonoBehaviour
 {
-    [SerializeField] private Transform _target;
+    public Transform Target;
 
     // Start is called before the first frame update
     void Start()
@@ -14,6 +14,6 @@ public class FollowLookAtCamera : MonoBehaviour
 
     private void LateUpdate()
     {
-        transform.position = new Vector3(_target.transform.position.x, _target.transform.position.y, -10);
+        transform.position = new Vector3(Target.transform.position.x, Target.transform.position.y, -10);
     }
 }
