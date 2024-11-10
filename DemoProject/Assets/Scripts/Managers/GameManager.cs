@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        _managers.OnUpdate();
+    }
+
     public void GameOver()
     {
         // TODO 

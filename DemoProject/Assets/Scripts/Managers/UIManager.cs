@@ -15,7 +15,7 @@ public class UIManager
         get
         {
             GameObject root = GameObject.Find("BaseCanvas");
-            if (root != null)
+            if (root == null)
                 root = new GameObject { name = "BaseCanvas" };
 
             return root;
@@ -81,6 +81,11 @@ public class UIManager
         go.transform.SetParent(Root.transform);
 
         return popup;
+    }
+
+    public T GetUI<T>(string name = null) where T : UIBase
+    {
+        return GameObject.FindObjectOfType<T>();
     }
 
     public void ClosePopupUI(UIPopup popup)

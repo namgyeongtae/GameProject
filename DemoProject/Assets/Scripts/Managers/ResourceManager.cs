@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.UI.Image;
 
 public class ResourceManager
 {
@@ -36,6 +37,22 @@ public class ResourceManager
 
         GameObject go = Object.Instantiate(original, parent);
         go.name = original.name;
+        return go;
+    }
+
+    public GameObject Instantiate(GameObject prefab, int poolCount = 5, Transform parent = null)
+    {
+        if (prefab == null)
+        {
+            Debug.Log($"Failed to load prefab : {prefab}");
+            return null;
+        }
+
+        if (prefab.GetComponent<Poolable>() != null)
+            return Managers.Pool.Pop(prefab, parent, poolCount).gameObject;
+
+        GameObject go = Object.Instantiate(prefab, parent);
+        go.name = prefab.name;
         return go;
     }
 

@@ -9,5 +9,7 @@ public class CameraManager : Manager
     public override void Init()
     {
         MainCamera = Camera.main;
+
+        MainCamera.GetComponent<FollowLookAtCamera>().Target = Managers.Character.Player.transform;
     }
 }
