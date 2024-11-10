@@ -220,9 +220,9 @@ public class Boss : MonoBehaviour
 
     #endregion
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(DamageTaken damagTaken)
     {
-        _currentHp -= damage;
+        _currentHp -= damagTaken.DamageAmount;
 
         CheckPhase();
 
@@ -330,7 +330,10 @@ public class Boss : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             var player = collision.GetComponent<Player>();
-            player.TakeDamage(this.gameObject, _bossStat);
+
+            DamageTaken damagTaken = new DamageTaken(_bossStat.attack, _bossStat.knockBackForce, this.gameObject);
+
+            player.TakeDamage(damagTaken);
         }
     }
 }

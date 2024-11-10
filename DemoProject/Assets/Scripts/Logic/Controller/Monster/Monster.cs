@@ -186,19 +186,23 @@ public class Monster : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        DamageTaken damageTaken = new DamageTaken(_monsterStat.attack, _monsterStat.knockBackForce, this.gameObject);
+
         if (collision.CompareTag("Player"))
         {
-            var player = collision.GetComponent<PlayerController>();
-            player.TakeDamage(this.gameObject, _monsterStat);
+            var player = collision.GetComponent<Player>();
+            player.TakeDamage(damageTaken);
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+        DamageTaken damageTaken = new DamageTaken(_monsterStat.attack, _monsterStat.knockBackForce, this.gameObject);
+
         if (collision.CompareTag("Player"))
         {
-            var player = collision.GetComponent<PlayerController>();
-            player.TakeDamage(this.gameObject, _monsterStat);
+            var player = collision.GetComponent<Player>();
+            player.TakeDamage(damageTaken);
         }
     }
 }

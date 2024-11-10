@@ -58,7 +58,6 @@ public class GoblinKnight : Enemy
 
         if (Vector2.Distance(transform.position, player.transform.position) <= _stat.detectRange)
         {
-            Debug.Log("Success Detecting");
             _enemyTarget = player.transform;
 
             if (!IsArmed) Armed();
@@ -66,11 +65,10 @@ public class GoblinKnight : Enemy
         }
 
         _animator.SetBool("IsMove", false);
-        _navmeshAgent.isStopped = true;
+        // _navmeshAgent.isStopped = true;
 
         _enemyTarget = null;
 
-        Debug.Log("Detect");
         return NodeState.Failure;
     }
 
@@ -80,10 +78,10 @@ public class GoblinKnight : Enemy
         {
             if (Vector2.Distance(_enemyTarget.position, transform.position) > _stat.attackRange)
             {
-                _navmeshAgent.enabled = true;
-                _navmeshAgent.isStopped = false;
-                _navmeshAgent.speed = 1.5f;
-                _navmeshAgent.SetDestination(_enemyTarget.position);
+                //_navmeshAgent.enabled = true;
+                //_navmeshAgent.isStopped = false;
+                //_navmeshAgent.speed = 1.5f;
+                //_navmeshAgent.SetDestination(_enemyTarget.position);
 
                 bool flip = _enemyTarget.transform.position.x >= transform.position.x ? true : false;
                 FlipSprite(flip);
@@ -95,11 +93,11 @@ public class GoblinKnight : Enemy
                 return NodeState.Running;
             }
 
-            if (_navmeshAgent.enabled)
-            {
-                _navmeshAgent.isStopped = true;
-                _navmeshAgent.speed = 0f;
-            }
+            //if (_navmeshAgent.enabled)
+            //{
+            //    _navmeshAgent.isStopped = true;
+            //    _navmeshAgent.speed = 0f;
+            //}
 
             return NodeState.Success;
         }
@@ -122,7 +120,7 @@ public class GoblinKnight : Enemy
         else
         {
             // 공격 실시
-            _navmeshAgent.enabled = false;
+            // _navmeshAgent.enabled = false;
 
             Debug.Log($"Distance : {Vector2.Distance(transform.position, _enemyTarget.position)}");
             _animator.SetTrigger("IsAttack");

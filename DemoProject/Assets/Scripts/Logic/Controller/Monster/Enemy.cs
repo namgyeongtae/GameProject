@@ -1,8 +1,10 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using static INode;
 
-public class Enemy : Entity
+public class Enemy : Entity, IDamageable
 {
     public GameObject[] _possibleDropItems;
 
@@ -14,15 +16,31 @@ public class Enemy : Entity
 
     protected Vector3 _spawnPoint;
     protected Vector3 _target;
+    protected Vector3 _prevTarget;
 
     protected Vector3 _wanderPoint;
     protected bool _spawned;
 
     protected Transform _enemyTarget;
 
+    // protected NavMeshAgent _navmeshAgent;
+
     protected bool _isAttacking;
 
     public Transform EnemyTarget => _enemyTarget;
+
+    protected override void Awake()
+    {
+        base.Awake();
+
+        //_navmeshAgent = GetComponent<NavMeshAgent>();
+
+        //if (_navmeshAgent != null)
+        //{
+        //    _navmeshAgent.updateRotation = false;
+        //    _navmeshAgent.updateUpAxis = false;
+        //}
+    }
 
     protected override void Start()
     {
@@ -65,16 +83,25 @@ public class Enemy : Entity
         {
             if (IsArmed) Armed();
 
-            if (Vector2.Distance(transform.position, _wanderPoint) > 0.1)
+            if (Vector2.Distance(transform.position, _wanderPoint) > 1f)
             {
                 _animator.SetBool("IsMove", true);
 
                 _target = _wanderPoint;
 
-                _navmeshAgent.enabled = true;
-                _navmeshAgent.speed = 1f;
-                _navmeshAgent.isStopped = false;
-                _navmeshAgent.SetDestination(_target);
+                //_navmeshAgent.enabled = true;
+                //_navmeshAgent.speed = 1f;
+                //_navmeshAgent.isStopped = false;
+
+                //if (!_prevTarget.Equals(_target))
+                //{
+                //    _navmeshAgent.SetDestination(_target);
+                //    _prevTarget = _target;
+                //}
+
+                Vector3 dir = _target - transform.position;
+
+                transform.position += dir * 0.7f * Time.deltaTime;
 
                 bool flip = (transform.position.x > _target.x) ? false : true;
                 FlipSprite(flip);
@@ -87,7 +114,8 @@ public class Enemy : Entity
                     _waitTime -= Time.deltaTime;
                 else
                 {
-                    _wanderPoint = _spawnPoint + (Vector3)Random.insideUnitCircle * _wanderRange;
+                    Vector3 nextPos = _spawnPoint + (Vector3)Random.insideUnitCircle * _wanderRange;
+                    _wanderPoint = SearchWanderPoint(nextPos);
                     _waitTime = Random.Range(2, 6);
                 }
             }
@@ -96,22 +124,32 @@ public class Enemy : Entity
         return NodeState.Success;
     }
 
-    public override void TakeDamage(GameObject hitSource, Stat hitterStat)
+    public void TakeDamage(DamageTaken damageTaken)
     {
         if (!_spawned) return;
 
         if (!IsArmed && _weapon.WeaponType == Define.WeaponType.Sword) Armed();
 
-        base.TakeDamage(hitSource, hitterStat);
+        if (damageTaken.KnockBackForce > 0)
+            StartCoroutine(KnockBack(damageTaken));
+
+        _currentHP -= damageTaken.DamageAmount;
+
+        foreach (SpriteRenderer renderer in _spritesInGFX)
+            renderer.material.shader = _hitEffectShader;
 
         if (_currentHP <= 0)
         {
-            DropItems(Define.DROP_MIN, Define.DROP_MAX);
-            Managers.Resource.Destroy(this.gameObject);
+            Die();
+        }
+        else
+        {
+            CancelInvoke("BackToOriginShader");
+            Invoke("BackToOriginShader", 0.4f);
         }
     }
 
-    public void DropItems(int min, int max)
+    private void DropItems(int min, int max)
     {
         int random = Random.Range(min, max);
 
@@ -122,8 +160,18 @@ public class Enemy : Entity
             go.transform.rotation = Quaternion.identity;
         }
     }
+    
+    private void Die()
+    {
+        int random = Random.Range(Define.XP_MIN, Define.XP_MAX);
 
-    public void Spawn()
+        Managers.XP.AddXP(10);
+
+        DropItems(Define.DROP_MIN, Define.DROP_MAX);
+        Managers.Resource.Destroy(this.gameObject);
+    }
+
+    private void Spawn()
     {
         if (_spritesInGFX.Count > 0) 
             StartCoroutine(CoSpawn());
@@ -185,9 +233,30 @@ public class Enemy : Entity
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.collider.TryGetComponent(out PlayerController playerController))
+        if (collision.collider.TryGetComponent(out Player playerController))
         {
-            collision.collider.GetComponent<PlayerController>().TakeDamage(this.gameObject, _stat);
+            collision.collider.GetComponent<Player>().TakeDamage(_damageTaken);
         }
+    }
+
+    private Vector3 SearchWanderPoint(Vector3 targetPosition, float searchRadiusIncrement = 1.0f, float maxSearchRadius = 70f)
+    {
+        NavMeshHit hit;
+        float searchRadius = searchRadiusIncrement;
+
+        while (searchRadius <= maxSearchRadius)
+        {
+            if (NavMesh.SamplePosition(targetPosition, out hit, searchRadius, NavMesh.AllAreas))
+            {
+                // 유효한 NavMesh 위치를 찾았을 때 반환
+                return hit.position;
+            }
+            // 검색 반경을 증가시켜 다시 시도
+            searchRadius += searchRadiusIncrement;
+        }
+
+        // 유효한 위치를 찾지 못했을 경우 원래 위치를 반환하거나 예외 처리
+        Debug.LogWarning("유효한 NavMesh 위치를 찾지 못했습니다.");
+        return targetPosition;
     }
 }

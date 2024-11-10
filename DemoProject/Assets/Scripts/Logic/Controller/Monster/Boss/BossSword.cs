@@ -7,6 +7,13 @@ public class BossSword : MonoBehaviour
 {
     [SerializeField] Stat _stat;
 
+    DamageTaken _damageTaken;
+
+    private void Start()
+    {
+        _damageTaken = new DamageTaken(_stat.attack, _stat.knockBackForce, this.gameObject);
+    }
+
     public void AttackDash(GameObject target)
     {
         Vector2 targetDir = target.transform.position - this.transform.position;
@@ -33,7 +40,7 @@ public class BossSword : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.GetComponent<Player>().TakeDamage(this.gameObject, _stat);
+            collision.GetComponent<Player>().TakeDamage(_damageTaken);
         }
     }
 }
